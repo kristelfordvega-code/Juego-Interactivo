@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Connector Challenge: laboratorio interactivo para aprender arquitectura y conectores de computadoras."
+  >
+  <title>Connector Challenge | Laboratorio de Hardware</title>
+  <link rel="stylesheet" href="ai_studio_code.css">
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="top-header">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">⌬</span>
+      <div>
+        <p class="eyebrow">LABORATORIO DE INGENIERÍA INDUSTRIAL</p>
+        <h1>CONNECTOR CHALLENGE</h1>
+      </div>
+    </div>
+
+    <div class="system-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      SISTEMA OPERATIVO
+    </div>
+  </header>
+
+  <nav class="main-nav" aria-label="Modos de la aplicación">
+    <button
+      class="nav-tab active"
+      type="button"
+      data-view="quiz-view"
+      aria-selected="true"
+    >
+      🎯 Test de Arquitectura
+    </button>
+
+    <button
+      class="nav-tab"
+      type="button"
+      data-view="match-view"
+      aria-selected="false"
+    >
+      🔌 Conecta el Puerto
+    </button>
+
+    <button
+      class="nav-tab"
+      type="button"
+      data-view="builder-view"
+      aria-selected="false"
+    >
+      🖥️ Arma tu PC
+    </button>
+  </nav>
+
+  <main class="app-shell">
+    <section id="quiz-view" class="app-view active" aria-labelledby="quiz-title">
+      <div id="quiz-setup" class="panel setup-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PROTOCOLO DE ACCESO</p>
+            <h2 id="quiz-title">Configurar certificación técnica</h2>
+          </div>
+          <span class="chip">10 RETOS</span>
+        </div>
+
+        <form id="setup-form" class="setup-form">
+          <label class="form-field full-width">
+            <span>Nombre completo del estudiante</span>
+            <input
+              id="player-name"
+              name="playerName"
+              type="text"
+              minlength="2"
+              maxlength="40"
+              autocomplete="name"
+              placeholder="Ejemplo: Andrea Vargas"
+              required
+            >
+          </label>
+
+          <fieldset class="form-field full-width">
+            <legend>Selecciona un avatar</legend>
+            <div id="avatar-selector" class="avatar-grid">
+              <label class="avatar-option selected">
+                <input type="radio" name="avatar" value="🤖" checked>
+                <span class="avatar-symbol">🤖</span>
+                <strong>CyberByte</strong>
+                <small>Androide de Silicio</small>
+              </label>
+
+              <label class="avatar-option">
+                <input type="radio" name="avatar" value="🐲">
+                <span class="avatar-symbol">🐲</span>
+                <strong>VoltDragon</strong>
+                <small>Overclock Extremo</small>
+              </label>
+
+              <label class="avatar-option">
+                <input type="radio" name="avatar" value="🦊">
+                <span class="avatar-symbol">🦊</span>
+                <strong>PixelFox</strong>
+                <small>Centinela del Hardware</small>
+              </label>
+
+              <label class="avatar-option">
+                <input type="radio" name="avatar" value="🚀">
+                <span class="avatar-symbol">🚀</span>
+                <strong>NanoBot-9000</strong>
+                <small>Dron de Diagnóstico</small>
+              </label>
+            </div>
+          </fieldset>
+
+          <label class="form-field">
+            <span>Módulo de evaluación</span>
+            <select id="module-select" name="module">
+              <option value="all">
+                Evaluación Integral - 10 retos
+              </option>
+              <option value="mobo">
+                1. Tarjeta Madre e Internos
+              </option>
+              <option value="io">
+                2. Puertos I/O y Red
+              </option>
+              <option value="power">
+                3. Alimentación y Expansión
+              </option>
+            </select>
+          </label>
+
+          <label class="form-field">
+            <span>Dificultad base</span>
+            <select id="difficulty-select" name="difficulty">
+              <option value="apprentice">
+                Aprendiz - tiempo amplio
+              </option>
+              <option value="advanced" selected>
+                Técnico Avanzado - tiempo estándar
+              </option>
+              <option value="extreme">
+                Certificación Extrema - tiempo crítico
+              </option>
+            </select>
+          </label>
+
+          <button class="primary-button full-width" type="submit">
+            INICIAR DIAGNÓSTICO
+          </button>
+        </form>
+
+        <div class="leaderboard-wrapper">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">PERSISTENCIA LOCAL</p>
+              <h3>Tabla de récords</h3>
+            </div>
+            <button id="clear-records" class="danger-button" type="button">
+              Vaciar récords
+            </button>
+          </div>
+
+          <div class="table-scroll">
+            <table class="leaderboard">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Operador</th>
+                  <th>Módulo</th>
+                  <th>Nivel</th>
+                  <th>Vidas</th>
+                  <th>Puntos</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="quiz-game" class="hidden">
+        <section class="hud panel" aria-label="Información del jugador">
+          <div class="player-card">
+            <span id="hud-avatar" class="hud-avatar">🤖</span>
+            <div>
+              <small>OPERADOR</small>
+              <strong id="hud-name">Estudiante</strong>
+            </div>
+          </div>
+
+          <div class="hud-stat">
+            <small>RETO</small>
+            <strong id="hud-progress">1 / 10</strong>
+          </div>
+
+          <div class="hud-stat">
+            <small>FASE</small>
+            <strong id="hud-phase">Fase 1 Básica</strong>
+          </div>
+
+          <div class="hud-stat">
+            <small>VIDAS</small>
+            <strong id="hud-lives">❤️❤️❤️</strong>
+          </div>
+
+          <div class="hud-stat score-stat">
+            <small>PUNTAJE</small>
+            <strong id="hud-score">0</strong>
+          </div>
+
+          <div class="hud-stat timer-stat">
+            <small>TIEMPO</small>
+            <strong id="hud-timer">⏳ 22s</strong>
+          </div>
+
+          <button id="open-wheel" class="wheel-button" type="button">
+            🎡 Giros: <span id="spin-count">1</span>
+          </button>
+        </section>
+
+        <section class="status-bar" aria-label="Estados activos">
+          <span id="status-topic" class="status-badge">Tema</span>
+          <span id="status-difficulty" class="status-badge">Nivel</span>
+          <span id="status-shield" class="status-badge inactive">
+            🛡️ Escudo
+          </span>
+          <span id="status-double" class="status-badge inactive">
+            ⚡ Doble puntaje
+          </span>
+          <span id="status-speed" class="status-badge">
+            ⏱️ Bonus rapidez
+          </span>
+        </section>
+
+        <section class="powerups panel" aria-labelledby="powerup-title">
+          <div>
+            <p class="eyebrow">INVENTARIO DE CAMPO</p>
+            <h3 id="powerup-title">Comodines</h3>
+          </div>
+
+          <div class="powerup-grid">
+            <button class="powerup-button" type="button" data-powerup="fifty">
+              ✂️ 50/50
+              <span id="count-fifty">1</span>
+            </button>
+
+            <button class="powerup-button" type="button" data-powerup="hint">
+              💡 Pista
+              <span id="count-hint">2</span>
+            </button>
+
+            <button class="powerup-button" type="button" data-powerup="life">
+              🩹 +1 Vida
+              <span id="count-life">1</span>
+            </button>
+
+            <button class="powerup-button" type="button" data-powerup="shield">
+              🛡️ Escudo
+              <span id="count-shield">1</span>
+            </button>
+
+            <button class="powerup-button" type="button" data-powerup="double">
+              ⚡ 2X Puntos
+              <span id="count-double">1</span>
+            </button>
+
+            <button class="powerup-button exchange" type="button" data-powerup="buy">
+              🪙 Canjear giro
+              <span>200 pts</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="diagnostic-console">
+          <div class="console-header">
+            <div>
+              <span id="console-subsystem" class="console-chip">
+                SUBSISTEMA
+              </span>
+              <span id="console-standard" class="console-chip accent">
+                ESTÁNDAR
+              </span>
+            </div>
+            <span class="console-live">● TELEMETRÍA ACTIVA</span>
+          </div>
+
+          <pre id="console-terminal" class="console-terminal"></pre>
+
+          <div class="question-area">
+            <p class="question-index">INCIDENCIA DETECTADA</p>
+            <h2 id="question-text"></h2>
+
+            <div id="hint-box" class="hint-box hidden"></div>
+
+            <div id="answer-grid" class="answer-grid"></div>
+
+            <div
+              id="question-feedback"
+              class="feedback-box hidden"
+              role="status"
+              aria-live="polite"
+            ></div>
+          </div>
+        </section>
+      </div>
+
+      <div id="quiz-result" class="panel result-panel hidden">
+        <p id="result-eyebrow" class="eyebrow">SESIÓN FINALIZADA</p>
+        <div id="result-icon" class="result-icon">🏆</div>
+        <h2 id="result-title">Certificación superada</h2>
+        <p id="result-message"></p>
+
+        <div class="result-stats">
+          <div>
+            <small>PUNTAJE</small>
+            <strong id="result-score">0</strong>
+          </div>
+          <div>
+            <small>ACIERTOS</small>
+            <strong id="result-correct">0</strong>
+          </div>
+          <div>
+            <small>VIDAS</small>
+            <strong id="result-lives">0</strong>
+          </div>
+        </div>
+
+        <button id="restart-quiz" class="primary-button" type="button">
+          VOLVER AL CENTRO DE CONTROL
+        </button>
+      </div>
+    </section>
+
+    <section id="match-view" class="app-view" aria-labelledby="match-title">
+      <div class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PROTOCOLO DE EMPAREJAMIENTO</p>
+            <h2 id="match-title">Conecta el puerto</h2>
+          </div>
+          <button id="reset-match" class="secondary-button" type="button">
+            Reiniciar
+          </button>
+        </div>
+
+        <p class="mode-description">
+          Selecciona un conector y luego su función electromecánica.
+        </p>
+
+        <div class="match-board">
+          <div>
+            <h3>Conectores</h3>
+            <div id="connector-column" class="match-column"></div>
+          </div>
+
+          <div>
+            <h3>Funciones</h3>
+            <div id="function-column" class="match-column"></div>
+          </div>
+        </div>
+
+        <div
+          id="match-feedback"
+          class="mode-feedback"
+          role="status"
+          aria-live="polite"
+        >
+          Esperando selección...
+        </div>
+      </div>
+    </section>
+
+    <section id="builder-view" class="app-view" aria-labelledby="builder-title">
+      <div class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">SECUENCIA DE ENSAMBLE</p>
+            <h2 id="builder-title">Arma tu computadora</h2>
+          </div>
+          <button id="reset-builder" class="secondary-button" type="button">
+            Reiniciar
+          </button>
+        </div>
+
+        <p class="mode-description">
+          Instala los componentes en el orden técnico indicado por la consola.
+        </p>
+
+        <div class="builder-layout">
+          <aside class="component-tray">
+            <h3>Bandeja de componentes</h3>
+            <div id="component-list"></div>
+          </aside>
+
+          <section class="motherboard">
+            <div class="board-label">PCB-MBX // REV 5.0</div>
+
+            <pre class="board-ascii" aria-hidden="true">
+┌──────────────────────────────────────────────┐
+│ VRM    CPU_SOCKET        DIMM_A1  DIMM_B1   │
+│ ▓▓▓    ┌────────┐        ║       ║          │
+│        │  AM5   │        ║       ║          │
+│        └────────┘                            │
+│                    M.2_KEY_M                 │
+│                 ═════════════                │
+│                                              │
+│ PCIe_X16  ═══════════════════════════════    │
+│                                      ATX_24P │
+└──────────────────────────────────────────────┘</pre>
+
+            <div id="board-slots" class="board-slots"></div>
+
+            <div class="post-panel">
+              <span>POST</span>
+              <div class="post-led" data-led="cpu">CPU</div>
+              <div class="post-led" data-led="dram">DRAM</div>
+              <div class="post-led" data-led="vga">VGA</div>
+              <div class="post-led" data-led="boot">BOOT</div>
+            </div>
+          </section>
+
+          <aside class="builder-console">
+            <h3>Diagnóstico</h3>
+            <pre id="builder-log">[SYS] Esperando instalación del CPU...</pre>
+
+            <button id="power-button" class="power-button hidden" type="button">
+              ⚡ Presionar Botón Power (PS_ON#)
+            </button>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div
+    id="wheel-modal"
+    class="modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="wheel-title"
+  >
+    <div class="modal-card">
+      <button
+        id="close-wheel"
+        class="modal-close"
+        type="button"
+        aria-label="Cerrar ruleta"
+      >
+        ×
+      </button>
+
+      <p class="eyebrow">SUMINISTROS DE EMERGENCIA</p>
+      <h2 id="wheel-title">Ruleta de suministros</h2>
+
+      <div class="wheel-wrapper">
+        <div class="wheel-pointer" aria-hidden="true"></div>
+        <canvas
+          id="supply-wheel"
+          width="440"
+          height="440"
+          aria-label="Ruleta con seis premios"
+        ></canvas>
+      </div>
+
+      <p id="wheel-message">Pulsa girar para obtener un recurso.</p>
+
+      <button id="spin-wheel" class="primary-button" type="button">
+        GIRAR RULETA
+      </button>
+    </div>
+  </div>
+
+  <script src="ai_studio_code.js"></script>
+</body>
+</html>
